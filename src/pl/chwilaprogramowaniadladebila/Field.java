@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class Field extends JButton {
 
@@ -12,6 +13,8 @@ public class Field extends JButton {
     private int minesAround = 0;
 
     private boolean isMine = false, clicked = false;
+
+    public MouseAdapter mouseAdapter;
 
     public Field(int x, int y, int width, int height, int i, int j){
         this.i = i;
@@ -32,6 +35,14 @@ public class Field extends JButton {
         return isMine;
     }
 
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
+
     public void setMine(boolean mine) {
         isMine = mine;
     }
@@ -45,12 +56,11 @@ public class Field extends JButton {
     }
 
     public void MouseListener(){
-        addMouseListener(new MouseAdapter() {
+        addMouseListener(mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(SwingUtilities.isLeftMouseButton(e)){
                     Minesweeper.board.checkField(i,j);
-                    clicked = true;
                 }
             }
         });
