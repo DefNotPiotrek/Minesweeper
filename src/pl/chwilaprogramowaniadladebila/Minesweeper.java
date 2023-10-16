@@ -6,7 +6,7 @@ import java.io.File;
 
 public class Minesweeper extends JFrame {
 
-    private final int width = 600, height = 684, margin = 40;
+    private final int width = 650, height = 684, margin = 40;
 
     public static Font courier, looseScreen;
 
@@ -14,7 +14,7 @@ public class Minesweeper extends JFrame {
 
     public static LooseAndWinScreen looseAndWinScreen;
 
-    private static boolean gameLoose = false, gameWin = false;
+    private static boolean gameLoose = false, gameWin = false, firstShoot = true;
 
     public Minesweeper() {
         setTitle("Minesweeper");
@@ -51,6 +51,14 @@ public class Minesweeper extends JFrame {
 
     public static void setGameWin(boolean gameWin) {
         Minesweeper.gameWin = gameWin;
+    }
+
+    public static boolean isFirstShoot() {
+        return firstShoot;
+    }
+
+    public static void setFirstShoot(boolean firstShoot) {
+        Minesweeper.firstShoot = firstShoot;
     }
 
     private void setFont(){

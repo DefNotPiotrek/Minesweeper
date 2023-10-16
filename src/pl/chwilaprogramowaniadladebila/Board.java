@@ -21,7 +21,7 @@ public class Board extends JPanel {
         this.height = height;
 
         launchGame();
-
+        System.out.println(width);
 
         setVisible(true);
         setOpaque(false);
@@ -147,10 +147,18 @@ public class Board extends JPanel {
         }
     }
 
-    public void checkField(int i, int j){
+    public void checkField(int i, int j) {
         fields[i][j].setClicked(true);
-        if (fields[i][j].isMine())
-            loose();
+        if (fields[i][j].isMine()) {
+            if (Minesweeper.isFirstShoot()) {
+                fields[i][j].setMine(false);
+                puttedMines--;
+                putMines();
+                refreshFields();
+            }
+            else
+                loose();
+        }
         if (!fields[i][j].isMine()) {
             if (i - 1 >= 0) {
                 //X-0-0

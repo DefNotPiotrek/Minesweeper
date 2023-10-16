@@ -22,6 +22,8 @@ public class Field extends JButton {
         this.width = width;
         this.height = height;
 
+        setBorderPainted(false);
+
         //mouse
         MouseListener();
 
@@ -60,6 +62,8 @@ public class Field extends JButton {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(SwingUtilities.isLeftMouseButton(e)){
+                    if (Minesweeper.isFirstShoot())
+                        Minesweeper.setFirstShoot(false);
                     Minesweeper.board.checkField(i,j);
                 }
             }
