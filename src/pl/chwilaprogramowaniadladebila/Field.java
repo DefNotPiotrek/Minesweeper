@@ -12,7 +12,7 @@ public class Field extends JButton {
 
     private int minesAround = 0;
 
-    private boolean isMine = false, clicked = false;
+    private boolean isMine = false, clicked = false, isFlaged = false;
 
     public MouseAdapter mouseAdapter;
 
@@ -61,10 +61,17 @@ public class Field extends JButton {
         addMouseListener(mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(SwingUtilities.isLeftMouseButton(e)){
+                if(SwingUtilities.isLeftMouseButton(e) && !isFlaged){
                     if (Minesweeper.isFirstShoot())
                         Minesweeper.setFirstShoot(false);
                     Minesweeper.board.checkField(i,j);
+                }
+                else if(SwingUtilities.isRightMouseButton(e) && !isClicked()){
+                    if (isFlaged)
+                        isFlaged = false;
+                    else
+                        isFlaged = true;
+                    Minesweeper.board.refreshFields();
                 }
             }
         });
@@ -94,6 +101,11 @@ public class Field extends JButton {
                 g.setFont(Minesweeper.courier);
                 g.drawString(String.valueOf(minesAround), 12, 25);
             }
+        }
+        else if (isFlaged){
+            g.setColor(Color.black);
+            g.setFont(Minesweeper.courier);
+            g.drawString("F", 12, 25);
         }
     }
 }
