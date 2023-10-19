@@ -8,11 +8,12 @@ public class Minesweeper extends JFrame {
 
     private final int width = 650, height = 684, margin = 40;
 
-    public static Font courier, looseScreen;
+    public static Font courier, looseScreen, timeAndScoreFont;
 
     public static Board board;
-
     public static LooseAndWinScreen looseAndWinScreen;
+    public static TimeAndScore timeAndScore;
+    public static RefreshButton refreshButton;
 
     private static boolean gameLoose = false, gameWin = false, firstShoot = true;
 
@@ -30,6 +31,12 @@ public class Minesweeper extends JFrame {
 
         //Add Board
         add(board = new Board(width - margin*2, height - margin*3, margin));
+
+        //Add Refresh Button
+        add(refreshButton = new RefreshButton(margin, margin, width/2-margin));
+
+        //Add Time and score board
+        add(timeAndScore = new TimeAndScore(width - margin*2, margin*2, margin));
 
         //Add Background
         add(new Background(width,height));
@@ -65,6 +72,7 @@ public class Minesweeper extends JFrame {
         try {
             courier = Font.createFont(Font.TRUETYPE_FONT, new File("res\\CourierPrimeSans.ttf")).deriveFont(150 * 0.2f);
             looseScreen = Font.createFont(Font.TRUETYPE_FONT, new File("res\\CourierPrimeSans.ttf")).deriveFont(150 * 1.0f);
+            timeAndScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("res\\CourierPrimeSans.ttf")).deriveFont(150 * 0.3f);
         }
         catch (Exception e){
             e.printStackTrace();

@@ -37,16 +37,16 @@ public class Field extends JButton {
         return isMine;
     }
 
+    public void setMine(boolean mine) {
+        isMine = mine;
+    }
+
     public boolean isClicked() {
         return clicked;
     }
 
     public void setClicked(boolean clicked) {
         this.clicked = clicked;
-    }
-
-    public void setMine(boolean mine) {
-        isMine = mine;
     }
 
     public int getMinesAround() {
@@ -57,24 +57,44 @@ public class Field extends JButton {
         this.minesAround = minesAround;
     }
 
+    public boolean isFlaged() {
+        return isFlaged;
+    }
+
     public void MouseListener(){
         addMouseListener(mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(SwingUtilities.isLeftMouseButton(e) && !isFlaged){
-                    if (Minesweeper.isFirstShoot())
-                        Minesweeper.setFirstShoot(false);
                     Minesweeper.board.checkField(i,j);
+
+                    if (Minesweeper.isFirstShoot()){
+                        Minesweeper.timeAndScore.countTime();
+                        Minesweeper.setFirstShoot(false);
+                    }
                 }
-                else if(SwingUtilities.isRightMouseButton(e) && !isClicked()){
-                    if (isFlaged)
-                        isFlaged = false;
-                    else
-                        isFlaged = true;
+                else if(SwingUtilities.isRightMouseButton(e) && !isClicked() && Minesweeper.board.getAvailableFlag() > 0){
+                    if (isFlaged){
+                        getRidOfTheFlag();
+                    }
+                    else{
+                        putFlag();
+                    }
+                    Minesweeper.timeAndScore.reload();
                     Minesweeper.board.refreshFields();
                 }
             }
         });
+    }
+
+    public void putFlag(){
+        Minesweeper.board.setAvailableFlag(Minesweeper.board.getAvailableFlag() - 1);
+        isFlaged = true;
+    }
+
+    public void getRidOfTheFlag(){
+        isFlaged = false;
+        Minesweeper.board.setAvailableFlag(Minesweeper.board.getAvailableFlag() + 1);
     }
 
     @Override public void paintComponent(Graphics g) {
@@ -96,13 +116,38 @@ public class Field extends JButton {
                 g.setFont(Minesweeper.courier);
                 g.drawString("X", 12, 25);
             }
-            else{
-                g.setColor(Color.red);
+            else if (minesAround != 0){
+                switch (minesAround){
+                    case 1:
+                        g.setColor(Color.blue);
+                        break;
+                    case 2:
+                        g.setColor(new Color(0,105,0));
+                        break;
+                    case 3:
+                        g.setColor(Color.red);
+                        break;
+                    case 4:
+                        g.setColor(new Color(0,0,155));
+                        break;
+                    case 5:
+                        g.setColor(new Color(160,82,45));
+                        break;
+                    case 6:
+                        g.setColor(Color.cyan);
+                        break;
+                    case 7:
+                        g.setColor(Color.black);
+                        break;
+                    case 8:
+                        g.setColor(Color.gray);
+                        break;
+                }
                 g.setFont(Minesweeper.courier);
                 g.drawString(String.valueOf(minesAround), 12, 25);
             }
         }
-        else if (isFlaged){
+        if (isFlaged){
             g.setColor(Color.black);
             g.setFont(Minesweeper.courier);
             g.drawString("F", 12, 25);

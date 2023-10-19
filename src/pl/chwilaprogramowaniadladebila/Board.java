@@ -10,7 +10,7 @@ public class Board extends JPanel {
 
     private final int width, height, howManyMines = 40 ,fieldsInRow = 16;
 
-    private int puttedMines = 0;
+    private int puttedMines = 0, availableFlag = howManyMines;
 
     private Field[][] fields;
 
@@ -21,7 +21,6 @@ public class Board extends JPanel {
         this.height = height;
 
         launchGame();
-        System.out.println(width);
 
         setVisible(true);
         setOpaque(false);
@@ -52,13 +51,14 @@ public class Board extends JPanel {
     public void putMines(){
         for (int i = 0; i < fields.length; i++){
             for (int j = 0; j < fields[0].length; j++){
+                if (puttedMines >= howManyMines)
+                    break;
                 int number = new Random().nextInt(6);
-                if (number==1){
+                if (number==1 && !fields[i][j].isMine()){
                     fields[i][j].setMine(true);
                     puttedMines++;
                 }
-                if (puttedMines >= howManyMines)
-                    break;
+
             }
         }
         if (puttedMines < howManyMines)
@@ -150,13 +150,13 @@ public class Board extends JPanel {
     public void checkField(int i, int j) {
         fields[i][j].setClicked(true);
         if (fields[i][j].isMine()) {
-            if (Minesweeper.isFirstShoot()) {
-                fields[i][j].setMine(false);
-                puttedMines--;
-                putMines();
-                refreshFields();
-            }
-            else
+//            if (Minesweeper.isFirstShoot()) {
+//                fields[i][j].setMine(false);
+//                puttedMines--;
+//                putMines();
+//                refreshFields();
+//            }
+//            else
                 loose();
         }
         if (!fields[i][j].isMine()) {
@@ -265,10 +265,19 @@ public class Board extends JPanel {
         Minesweeper.setGameLoose(true);
     }
 
+    public void win(){
+        Minesweeper.setGameWin(true);
+        for (int i = 0; i < fields.length; i++){
+            for (int j = 0; j < fields[0].length; j++){
+                fields[i][j].removeMouseListener(fields[i][j].mouseAdapter);
+            }
+        }
+    }
+
     public void makeFreeFieldsArray(){
-        freeFields.add(1);
-        freeFields.add(2);
-        freeFields.add(3);
+        for (int i = 1; i <= 8; i++){
+            freeFields.add(i);
+        }
     }
 
     public void refreshFields(){
@@ -278,6 +287,57 @@ public class Board extends JPanel {
                 fields[i][j].revalidate();
             }
         }
+        checkWin();
+    }
+
+    public void checkWin(){
+        boolean isItWin = true;
+        for (int i = 0; i < fields.length; i++){
+            for (int j = 0; j < fields[0].length; j++){
+                if ((fields[i][j].isMine() && !fields[i][j].isFlaged()) || (!fields[i][j].isMine() && !fields[i][j].isClicked()))
+                    isItWin = false;
+            }
+        }
+        if (isItWin){
+            win();
+        }
+    }
+
+    public void reset(){
+        for (int i = 0; i < fields.length; i++){
+            for (int j = 0; j < fields[0].length; j++){
+                if (fields[i][j].isMine()){
+                    fields[i][j].setMine(false);
+                    puttedMines = 0;
+                }
+                if (fields[i][j].isFlaged()){
+                    fields[i][j].getRidOfTheFlag();
+                    availableFlag = howManyMines;
+                }
+
+                if (fields[i][j].isClicked()){
+                    fields[i][j].setClicked(false);
+                }
+
+                fields[i][j].setMinesAround(0);
+                fields[i][j].addMouseListener(fields[i][j].mouseAdapter);
+            }
+        }
+        Minesweeper.setGameLoose(false);
+        Minesweeper.setGameWin(false);
+        putMines();
+        checkMinesAround();
+        Minesweeper.timeAndScore.reload();
+        refreshFields();
+
+    }
+
+    public int getAvailableFlag() {
+        return availableFlag;
+    }
+
+    public void setAvailableFlag(int availableFlag) {
+        this.availableFlag = availableFlag;
     }
 
     @Override public void paintComponent(Graphics g) {
