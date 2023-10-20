@@ -66,12 +66,14 @@ public class Field extends JButton {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(SwingUtilities.isLeftMouseButton(e) && !isFlaged){
-                    Minesweeper.board.checkField(i,j);
-
                     if (Minesweeper.isFirstShoot()){
                         Minesweeper.timeAndScore.countTime();
-                        Minesweeper.setFirstShoot(false);
+                        Minesweeper.timeAndScore.getTimeThread().setStop(false);
                     }
+
+                    Minesweeper.board.checkField(i,j);
+
+                    Minesweeper.setFirstShoot(false);
                 }
                 else if(SwingUtilities.isRightMouseButton(e) && !isClicked() && Minesweeper.board.getAvailableFlag() > 0){
                     if (isFlaged){
@@ -109,7 +111,7 @@ public class Field extends JButton {
         g.setColor(Color.darkGray);
         g.drawRect(0,0, width-1, height-1);
 
-        if (clicked){
+//        if (clicked){
             //showBombs
             if (isMine){
                 g.setColor(Color.black);
@@ -146,7 +148,7 @@ public class Field extends JButton {
                 g.setFont(Minesweeper.courier);
                 g.drawString(String.valueOf(minesAround), 12, 25);
             }
-        }
+//        }
         if (isFlaged){
             g.setColor(Color.black);
             g.setFont(Minesweeper.courier);

@@ -7,6 +7,8 @@ public class TimeAndScore extends JPanel {
 
     private int width, height, margin;
 
+    private TimeThread timeThread;
+
     private int time = 0;
 
     public TimeAndScore(int width, int height, int margin){
@@ -20,7 +22,8 @@ public class TimeAndScore extends JPanel {
     }
 
     public void countTime(){
-        new TimeThread();
+        if (timeThread == null)
+        timeThread = new TimeThread();
     }
 
     public void setTime(int time) {
@@ -29,6 +32,10 @@ public class TimeAndScore extends JPanel {
 
     public int getTime() {
         return time;
+    }
+
+    public TimeThread getTimeThread() {
+        return timeThread;
     }
 
     public void reload(){

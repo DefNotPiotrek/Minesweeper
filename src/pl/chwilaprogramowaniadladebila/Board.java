@@ -149,15 +149,12 @@ public class Board extends JPanel {
 
     public void checkField(int i, int j) {
         fields[i][j].setClicked(true);
-        if (fields[i][j].isMine()) {
-//            if (Minesweeper.isFirstShoot()) {
-//                fields[i][j].setMine(false);
-//                puttedMines--;
-//                putMines();
-//                refreshFields();
-//            }
-//            else
-                loose();
+        if (Minesweeper.isFirstShoot()) {
+            while ((fields[i][j].getMinesAround() != 0 || fields[i][j].isMine()))
+                reset();
+        }
+        if (fields[i][j].isMine() && !Minesweeper.isFirstShoot()) {
+            loose();
         }
         if (!fields[i][j].isMine()) {
             if (i - 1 >= 0) {
@@ -249,6 +246,7 @@ public class Board extends JPanel {
             }
         }
 
+        Minesweeper.timeAndScore.getTimeThread().setStop(false);
         refreshFields();
     }
 
@@ -323,13 +321,16 @@ public class Board extends JPanel {
                 fields[i][j].addMouseListener(fields[i][j].mouseAdapter);
             }
         }
+
+        Minesweeper.timeAndScore.getTimeThread().resetTime();
+        Minesweeper.timeAndScore.getTimeThread().setStop(true);
+        Minesweeper.setFirstShoot(true);
         Minesweeper.setGameLoose(false);
         Minesweeper.setGameWin(false);
         putMines();
         checkMinesAround();
         Minesweeper.timeAndScore.reload();
         refreshFields();
-
     }
 
     public int getAvailableFlag() {
